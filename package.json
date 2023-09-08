@@ -1,0 +1,26 @@
+{
+  "name": "sql-employee-tracker",
+  "version": "1.0.0",
+  "description": "Employee database tracker using mysql",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SkylarHammond55/employee-tracker"
+  },
+  "keywords": [
+    "mysql",
+    "inquirier"
+  ],
+  "author": "Skylar Hammond",
+  "license": "MIT",
+
+  "homepage": "https://github.com/SkylarHammond55/employee-tracker#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "mysql2": "^2.2.5",
+    "inquirer": "^8.2.4"
+  }
+}
