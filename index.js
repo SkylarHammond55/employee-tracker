@@ -143,3 +143,112 @@ const addRole = () => {
       })
   })
 };
+
+// Function to view all employees
+const viewAllEmployees = () => {
+  console.log('Here is a list of all employees:\n');
+  const query = `SELECT employee.id AS id, first_name, last_name, role.title AS title, department.name AS department, manager_id
+  FROM employee
+  LEFT JOIN role ON employee.role_id = role.id
+  LEFT JOIN department ON role.department_id = department.id`;
+
+  db.query(query, (err, result) => {
+      if (err) throw err;
+      console.table(result);
+
+      promptQuestions();
+  })
+};
+
+// Function to add an employee
+const addEmployee = () => {
+  db.query("SELECT * FROM employee", (err, employResult) => {
+      if (err) throw err;
+
+      const managers = employResult.map(({ first_name, last_name, id }) => ({ name: first_name + " " + last_name, value: id }))
+
+      db.query("SELECT * FROM role", (err, roleResult) => {
+          if (err) throw err;
+
+          const roles = roleResult.map(({ id, title }) => ({ name: title, value: id }))
+
+          let questions = [
+              {
+                  type: "input",
+                  name: "first_name",
+                  message: "What is the first name of the new employee?"
+              },
+              {
+                  type: "input",
+                  name: "last_name",
+                  message: "What is the last name of the new employee?"
+              },
+              {
+                  type: "list",
+                  name: "role",
+                  message: "What is the employee's role?",
+                  choices: roles
+              },
+              {
+                  type: "list",
+                  name: "manager",
+                  messages: "Who is the employee's manager?",
+                  choices: managers
+              }
+          ];
+
+          inquirer.prompt(questions)
+              .then(answer => {
+                  const query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`
+
+                  db.query(query, [answer.first_name, answer.last_name, answer.role, answer.manager], (err, res) => {
+                      if (err) throw err;
+                      console.log(`Employee ${answer.first_name} ${answer.last_name} has been successfully added!`)
+
+                      promptQuestions();
+                  })
+              })
+      })
+  })
+};
+
+// Function to update employee role
+const updateEmployeeRole = () => {
+  db.query("SELECT * FROM employee", (err, employResult) => {
+      if (err) throw err;
+
+      const employees = employResult.map(({ first_name, last_name, id }) => ({ name: first_name + " " + last_name, value: id }))
+
+      db.query("SELECT * FROM role", (err, roleResult) => {
+          if (err) throw err;
+
+          const roles = roleResult.map(({ title, id }) => ({ name: title, value: id }))
+
+          let questions = [
+              {
+                  type: "list",
+                  name: "employee",
+                  message: "Which employee's role would you like to update?",
+                  choices: employees
+              },
+              {
+                  type: "list",
+                  name: "role",
+                  message: "What is the employee's new role?",
+                  choices: roles
+              }
+          ]
+          inquirer.prompt(questions)
+              .then(answer => {
+                  const query = `UPDATE employee SET role_id = ? WHERE id = ?`;
+
+                  db.query(query, [answer.role, answer.employee], (err, result) => {
+                      if (err) throw err;
+                      console.log("Employee role has been updated!")
+
+                      promptQuestions();
+                  })
+              })
+      })
+  })
+};
