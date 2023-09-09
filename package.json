@@ -16,7 +16,6 @@
   ],
   "author": "Skylar Hammond",
   "license": "MIT",
-
   "homepage": "https://github.com/SkylarHammond55/employee-tracker#readme",
   "dependencies": {
     "dotenv": "^8.2.0",
